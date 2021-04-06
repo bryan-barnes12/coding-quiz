@@ -1,31 +1,31 @@
 let highScores = [["init", "bmb", "score", "0"]];
-let currentScore = ["", "", "", ""];
+let currentScore = 0;
+let currentScoreMult = 0;
+let score = 0;
 //let id = setInterval(reduceTime, 1000);
 
-let welcomeText = "Welcome to the coding game. This is the game. This is how to play. Click the button below to begin.";
-let resultsText = "You did this well...";
-var time = 60;
-
+let time = 60;
+let clockOperator = true;
 const questions = [{
-    question: "What is the airspeed of an African Swallow",
-    answer1: "1.21 Gigawatts",
-    answer2: "42",
-    answer3: "Laden, or unladen?",
-    answer4: "Blue",
+    question: "Which of the following is a JavaScript primitive data type?",
+    answer1: "String",
+    answer2: "Yarn",
+    answer3: "Rope",
+    answer4: "Cord",
+    correctAns: "answer1"
+}, {
+    question: "What does DOM stand for?",
+    answer1: "Document Operator Modual",
+    answer2: "Distinct Object Method",
+    answer3: "Document Object Model",
+    answer4: "Derivative of Obsolete Mechanism",
     correctAns: "answer3"
 }, {
-    question: "Blah Blah Blah",
-    answer1: "answer 1",
-    answer2: "answer 2",
-    answer3: "answer 3",
-    answer4: "answer 4",
-    correctAns: "answer3"
-}, {
-    question: "Third question",
-    answer1: "answer 1",
-    answer2: "answer 2",
-    answer3: "answer 3",
-    answer4: "answer 4",
+    question: "What is a valid way to call an event listener?",
+    answer1: "Hey Siri, call an event listener.",
+    answer2: "document.callEventListener('myButton')...",
+    answer3: "target.addEventListener(type, listener);",
+    answer4: "element",
     correctAns: "answer3"
 }, {
     question: "Fourth Question",
@@ -43,7 +43,6 @@ const questions = [{
     correctAns: "answer3"
 }, ""]
 let questionNum = 0;
-console.log(questions[questionNum]);
 function generateHeader() {
     let scoreDiv = document.createElement("DIV");
     let headlineDiv = document.createElement("DIV");
@@ -60,6 +59,7 @@ function generateHeader() {
     header.appendChild(timerDiv);
     console.log(header);
 }
+let welcomeText = "Welcome to the coding game. This is the game. This is how to play. Click the button below to begin.";
 function generateWelcome() {
     let main = document.getElementById("main");
     if (questionNum !== 0) {
@@ -81,12 +81,12 @@ function generateWelcome() {
     welcome.appendChild(newButton);
     console.log(main);
     document.getElementById("startButton").addEventListener("click", function () {
-        generateQuestion(questionNum);
+    generateQuestion(questionNum);
     });
 
 }
+let resultsText = "You did this well...";
 function generateResults() {
-    time = 60;
     let main = document.getElementById("main");
     main.removeChild(main.childNodes[1]);
     let newDiv = document.createElement("DIV");
@@ -97,21 +97,30 @@ function generateResults() {
     newH1.innerHTML = "Results"
     let newP = document.createElement("P");
     newP.innerHTML = resultsText;
+    let userScore = document.createElement("P");
+
+    // userScore.innerHTML = ;
     let newButton = document.createElement("BUTTON");
     newButton.id = "startButton";
     newButton.innerHTML = "begin game";
     results.appendChild(newH1);
     results.appendChild(newP);
+    results.appendChild(userScore);
     results.appendChild(newButton);
     console.log(main);
     document.getElementById("startButton").addEventListener("click", function () {
+        clockOperator = true;
+        time = 60;
         generateQuestion(questionNum);
+        currentScore = 0;
     });
-
+    document.getElementById("timer").innerHTML = "1:00";
+    questionNum = 0;
+    document.getElementById("score").innerHTML = currentScore;
 }
 
 function generateQuestion(questionNum) {
-    if (time === 60) {
+    if (time === 60 && clockOperator === true) {
         countDown();
     }
     let main = document.getElementById("main");
@@ -130,63 +139,34 @@ function generateQuestion(questionNum) {
         questionDiv.children[i + 1].innerHTML = questions[questionNum][x];
     }
     
-    questionNum++;
+
+    function scoreAndMoveOn(x) {
+        if (correctAnswer == x) {
+            currentScore += 5;
+            document.getElementById("score").innerHTML = currentScore;
+        } else {
+            time -= 10;
+            document.getElementById("score").innerHTML = currentScore;
+        }
+        if (questionNum < 5) {
+            generateQuestion(questionNum);
+        } else {
+            currentScoreMult = Math.floor(time / 6);
+            score = currentScore * currentScoreMult;
+            console.clear();
+            console.log(score);
+            generateResults();
+            clockOperator = false;
+        }
+    }
+
     let correctAnswer = questions[questionNum].correctAns;
     console.log(questionNum);
-    document.getElementById("answer1").addEventListener("click", function () {
-        if (correctAnswer == "answer1") {
-            currentScore[3] += 5;
-        } else {
-            time -= 10;
-        }
-        if (questionNum < 5) {
-            generateQuestion(questionNum);
-        } else {
-            generateResults();
-        }
-    });
-    document.getElementById("answer2").addEventListener("click", function () {
-        if (correctAnswer == "answer2") {
-            alert("Well done!");
-        } else {
-            alert("Oops!");
-            time -= 10;
-        }
-        if (questionNum < 5) {
-            generateQuestion(questionNum);
-        } else {
-            return;
-        }
-    });
-    document.getElementById("answer3").addEventListener("click", function () {
-        if (correctAnswer == "answer3") {
-            alert("Well done!");
-        } else {
-            alert("Oops!");
-            time -= 10;
-        }
-        if (questionNum < 5) {
-            generateQuestion(questionNum);
-        } else {
-            return;
-        }
-    });
-    document.getElementById("answer4").addEventListener("click", function () {
-        if (correctAnswer == "answer4") {
-            alert("Well done!");
-        } else {
-            alert("Oops!");
-            time -= 10;
-        }
-        if (questionNum < 5) {
-            generateQuestion(questionNum);
-        } else {
-            return;
-        }
-    });
-
-
-
+    document.getElementById("answer1").addEventListener("click", function (){scoreAndMoveOn("answer1");});
+    document.getElementById("answer2").addEventListener("click", function (){scoreAndMoveOn("answer2");});
+    document.getElementById("answer3").addEventListener("click", function (){scoreAndMoveOn("answer3");});
+    document.getElementById("answer4").addEventListener("click", function (){scoreAndMoveOn("answer4");});
+    questionNum++;
 }
 
 function replaceMain() {
@@ -197,8 +177,10 @@ function countDown() {
     var countSpan = document.getElementById("timer");
     let id = setInterval(reduceTime, 1000);
     function reduceTime() {
-      if (time == 0) {
+      if (time == 0 || clockOperator == false) {
         clearInterval(id);
+        score = currentScore;
+        generateResults();
       } else {
           if (time > 10) {
             time--; 
