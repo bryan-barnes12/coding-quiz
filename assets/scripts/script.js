@@ -1,4 +1,4 @@
-let highScores = [[4, "aaa"], [1, "aaa"], [0, "aaa"], [3, "aaa"], [2, "aaa"]];
+let highScores = [];
 let currentScore = 0;
 let currentScoreMult = 0;
 let score = 0;
@@ -204,22 +204,32 @@ generateWelcome();
 
 
 function registerScore() {
-    let localScores = highScores.reverse();
+    if (localStorage.getItem("highScores") === null) {
+        highScores = [[0, "aaa"], [0, "aaa"], [0, "aaa"], [0, "aaa"], [0, "aaa"]];
+    } else {
+        highScores = JSON.parse(localStorage.getItem("highScores"));
+    }
+    console.log(highScores);
+    function sortScores() {
+        let x = highScores.sort(function(a, b){return b - a;});
+        highScores = x;
+    }
+    sortScores();
+    console.log(highScores);
     for (let i = 0; i < highScores.length; i++) {
-        if (score > localScores[i][0]) {
-            localScores.pop();
-            console.log(localScores);
-            localScores.push([score, userInitials]);
-            console.log(localScores);
+        if (score > highScores[i][0]) {
+            highScores.pop();
+            highScores.push([score, userInitials]);
+            x = highScores.sort();
+            highScores = x.reverse();
             break;
         }    
     }
-    highScores = localScores.reverse();
+    //highScores = localScores.reverse();
     localStorage.setItem("highScores", JSON.stringify(highScores));
 }
 function displayScores() {
     scoreList = JSON.parse(localStorage.getItem("highScores"));
-    console.log(scoreList);
     let main = document.getElementById("main");
     main.removeChild(main.childNodes[1]);
     // create the high score div.

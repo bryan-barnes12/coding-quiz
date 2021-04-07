@@ -48,3 +48,10 @@ section {
     padding: 20px;
     margin: 20px;
 }
+
+#highScores li {
+    background-color: blanchedalmond;
+}
+#highScores li:nth-child(odd) {
+    background-color: bisque;
+}
