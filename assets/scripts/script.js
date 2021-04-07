@@ -3,7 +3,6 @@ let currentScore = 0;
 let currentScoreMult = 0;
 let score = 0;
 let userInitials = "";
-//let id = setInterval(reduceTime, 1000);
 
 let time = 60;
 let clockOperator = true;
@@ -29,28 +28,27 @@ const questions = [{
     answer4: "element",
     correctAns: "answer3"
 }, {
-    question: "Fourth Question",
-    answer1: "answer 1",
-    answer2: "answer 2",
-    answer3: "answer 3",
-    answer4: "answer 4",
-    correctAns: "answer3"
+    question: "Which of the following is not a correct way to define a function?",
+    answer1: "function myFunction() {};",
+    answer2: "let function = {myFunction}",
+    answer3: "let myVariable = myFunction() {}",
+    answer4: "let myObject = {key1: 'x', key2: 'y', key3: function myFunction(key1, key2) {}",
+    correctAns: "answer2"
 }, {
-    question: "Last question",
-    answer1: "answer 1",
-    answer2: "answer 2",
-    answer3: "answer 3",
-    answer4: "answer 4",
-    correctAns: "answer3"
+    question: "A for loop requires what to function correctly?",
+    answer1: "beginning, middle, end",
+    answer2: "start, while, quit",
+    answer3: "the variable 'i'.",
+    answer4: "initialization, stopping condition, iteration statement",
+    correctAns: "answer4"
 }, ""]
 let questionNum = 0;
 function generateHeader() {
     let scoreDiv = document.createElement("DIV");
     let headlineDiv = document.createElement("DIV");
     let timerDiv = document.createElement("DIV");
-    scoreDiv.innerHTML = "TEST";
+    scoreDiv.innerHTML = "high scores";
     scoreDiv.id = "score"
-    headlineDiv.innerHTML = "Coding Quiz";
     headlineDiv.id = "headline";
     timerDiv.innerHTML = "1:00";
     timerDiv.id = "timer";
@@ -59,6 +57,12 @@ function generateHeader() {
     header.appendChild(headlineDiv);
     header.appendChild(timerDiv);
     console.log(header);
+    let headline = document.getElementById("headline");
+    let quizLogo = document.createElement("h2");
+    quizLogo.innerHTML = "JavaScript Coding Game";
+    headline.appendChild(quizLogo);
+    document.getElementById("score").addEventListener("click", function (event){event.preventDefault();registerScore();displayScores();});
+
 }
 let welcomeText = "Welcome to the coding quiz. The elements of this quiz are created dynamically using javascript. To play, click the 'begin game' button and answer the questions as quickly and accurately as you can.";
 function generateWelcome() {
@@ -124,7 +128,6 @@ function generateResults() {
     });
     document.getElementById("timer").innerHTML = "1:00";
     questionNum = 0;
-    document.getElementById("score").innerHTML = currentScore;
 }
 
 function generateQuestion(questionNum) {
@@ -154,7 +157,6 @@ function generateQuestion(questionNum) {
         } else {
             time -= 10;
         }
-        document.getElementById("score").innerHTML = currentScore;
         if (questionNum < 5) {
             generateQuestion(questionNum);
         } else {
@@ -245,7 +247,7 @@ function displayScores() {
     // create the list elements.
     for (let i = 0; i < highScores.length; i++) {
         let newLi = document.createElement("li");
-        newLi.innerHTML = highScores[i];
+        newLi.innerHTML = `${i + 1}: ${highScores[i][1]} - ${highScores[i][0]}`;
         scoreLi.appendChild(newLi);
     }
     let newButton = document.createElement("BUTTON");
