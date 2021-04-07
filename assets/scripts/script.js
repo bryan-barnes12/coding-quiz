@@ -1,7 +1,8 @@
-let highScores = [["init", "bmb", "score", "0"]];
+let highScores = [[4, "aaa"], [1, "aaa"], [0, "aaa"], [3, "aaa"], [2, "aaa"]];
 let currentScore = 0;
 let currentScoreMult = 0;
 let score = 0;
+let userInitials = "";
 //let id = setInterval(reduceTime, 1000);
 
 let time = 60;
@@ -59,7 +60,7 @@ function generateHeader() {
     header.appendChild(timerDiv);
     console.log(header);
 }
-let welcomeText = "Welcome to the coding game. This is the game. This is how to play. Click the button below to begin.";
+let welcomeText = "Welcome to the coding quiz. The elements of this quiz are created dynamically using javascript. To play, click the 'begin game' button and answer the questions as quickly and accurately as you can.";
 function generateWelcome() {
     let main = document.getElementById("main");
     if (questionNum !== 0) {
@@ -70,7 +71,7 @@ function generateWelcome() {
     main.appendChild(newDiv);
     let welcome = document.getElementById("welcome");
     let newH3 = document.createElement("H3");
-    newH3.innerHTML = "javaScript Coding Game"
+    newH3.innerHTML = "JavaScript Coding Game"
     let newP = document.createElement("P");
     newP.innerHTML = welcomeText;
     let newButton = document.createElement("BUTTON");
@@ -85,33 +86,40 @@ function generateWelcome() {
     });
 
 }
-let resultsText = "You did this well...";
 function generateResults() {
+    // Removing the last element to fill the main section.
     let main = document.getElementById("main");
     main.removeChild(main.childNodes[1]);
+    // Creating the new container for the results section.
     let newDiv = document.createElement("DIV");
     newDiv.id = "results";
     main.appendChild(newDiv);
     let results = document.getElementById("results");
+    // Declaring the variables to be used in creating the results section.
     let newH1 = document.createElement("H1");
-    newH1.innerHTML = "Results"
     let newP = document.createElement("P");
-    newP.innerHTML = resultsText;
-    let userScore = document.createElement("P");
-
-    // userScore.innerHTML = ;
+    let newInputLabel = document.createElement("label");
+    let newInput = document.createElement("input");
     let newButton = document.createElement("BUTTON");
-    newButton.id = "startButton";
-    newButton.innerHTML = "begin game";
+    // Setting the attributes for the new elements.
+    newH1.innerHTML = "Results"
+    newP.innerHTML = `You scored ${score} points.`;
+    newInputLabel.innerHTML = "Initials:"
+    newInput.id = "userInitials"
+    newButton.id = "registerButton";
+    newButton.innerHTML = "submit score";
+    // Calling for the 
     results.appendChild(newH1);
     results.appendChild(newP);
-    results.appendChild(userScore);
+    results.appendChild(newInputLabel);
+    results.appendChild(newInput);
     results.appendChild(newButton);
-    console.log(main);
-    document.getElementById("startButton").addEventListener("click", function () {
+    document.getElementById("registerButton").addEventListener("click", function () {
         clockOperator = true;
         time = 60;
-        generateQuestion(questionNum);
+        userInitials = document.getElementById("userInitials").value;
+        registerScore();
+        displayScores();
         currentScore = 0;
     });
     document.getElementById("timer").innerHTML = "1:00";
@@ -139,15 +147,14 @@ function generateQuestion(questionNum) {
         questionDiv.children[i + 1].innerHTML = questions[questionNum][x];
     }
     
-
+    let correctAnswer = questions[questionNum].correctAns;
     function scoreAndMoveOn(x) {
         if (correctAnswer == x) {
             currentScore += 5;
-            document.getElementById("score").innerHTML = currentScore;
         } else {
             time -= 10;
-            document.getElementById("score").innerHTML = currentScore;
         }
+        document.getElementById("score").innerHTML = currentScore;
         if (questionNum < 5) {
             generateQuestion(questionNum);
         } else {
@@ -160,26 +167,20 @@ function generateQuestion(questionNum) {
         }
     }
 
-    let correctAnswer = questions[questionNum].correctAns;
     console.log(questionNum);
-    document.getElementById("answer1").addEventListener("click", function (){scoreAndMoveOn("answer1");});
-    document.getElementById("answer2").addEventListener("click", function (){scoreAndMoveOn("answer2");});
-    document.getElementById("answer3").addEventListener("click", function (){scoreAndMoveOn("answer3");});
-    document.getElementById("answer4").addEventListener("click", function (){scoreAndMoveOn("answer4");});
+    document.getElementById("answer1").addEventListener("click", function (event){event.preventDefault();scoreAndMoveOn("answer1");});
+    document.getElementById("answer2").addEventListener("click", function (event){event.preventDefault();scoreAndMoveOn("answer2");});
+    document.getElementById("answer3").addEventListener("click", function (event){event.preventDefault();scoreAndMoveOn("answer3");});
+    document.getElementById("answer4").addEventListener("click", function (event){event.preventDefault();scoreAndMoveOn("answer4");});
     questionNum++;
 }
 
-function replaceMain() {
-    let mainDiv = document.getElementById("main");
-    mainDiv.innerHTML = "different (for sure different) test";
-}
 function countDown() {
     var countSpan = document.getElementById("timer");
     let id = setInterval(reduceTime, 1000);
     function reduceTime() {
       if (time == 0 || clockOperator == false) {
         clearInterval(id);
-        score = currentScore;
         generateResults();
       } else {
           if (time > 10) {
@@ -203,12 +204,51 @@ generateWelcome();
 
 
 function registerScore() {
+    let localScores = highScores.reverse();
+    for (let i = 0; i < highScores.length; i++) {
+        if (score > localScores[i][0]) {
+            localScores.pop();
+            console.log(localScores);
+            localScores.push([score, userInitials]);
+            console.log(localScores);
+            break;
+        }    
+    }
+    highScores = localScores.reverse();
     localStorage.setItem("highScores", JSON.stringify(highScores));
 }
-registerScore();
 function displayScores() {
     scoreList = JSON.parse(localStorage.getItem("highScores"));
-    document.getElementById("score").innerHTML = scoreList[0][1] + scoreList[0][3];
-//    document.getElementById("score").innerHTML = scoreList[0][3];
-}
+    console.log(scoreList);
+    let main = document.getElementById("main");
+    main.removeChild(main.childNodes[1]);
+    // create the high score div.
+    let newDiv = document.createElement("DIV");
+    newDiv.id = "highScores";
+    main.appendChild(newDiv);
+    let scorePage = document.getElementById("highScores");
+    // create the high score ul.
+    let newUl = document.createElement("ul");
+    newUl.id = "scoreList"
+    scorePage.appendChild(newUl);
+    let scoreLi = document.getElementById("scoreList");
+    // create the list elements.
+    for (let i = 0; i < highScores.length; i++) {
+        let newLi = document.createElement("li");
+        newLi.innerHTML = highScores[i];
+        scoreLi.appendChild(newLi);
+    }
+    let newButton = document.createElement("BUTTON");
+    newButton.id = "restartButton";
+    newButton.innerHTML = "play again";
+    // Calling for the 
+    scorePage.appendChild(newButton);
+    // EVENT LISTENER FOR THE DISPLAY SCORES PAGE
+    document.getElementById("restartButton").addEventListener("click", function () {
+        clockOperator = true;
+        time = 60;
+        generateQuestion(questionNum);
+        currentScore = 0;
+    });
 
+}
